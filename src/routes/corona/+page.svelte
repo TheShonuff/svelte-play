@@ -1,7 +1,7 @@
 <script>
-	import { validate_component } from 'svelte/internal';
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
+	import { savedTasks } from '$lib/store';
 
 	/** @type {import('./$types').PageData}*/
 	export let data;
@@ -10,6 +10,8 @@
 
 	// unpack parsedTasks from page.js
 	let todos = data.parsedTasks;
+	$savedTasks = todos;
+	console.log($savedTasks);
 </script>
 
 <p>Hello from layout.server.js my num is: {$page.data.a}</p>
@@ -55,6 +57,26 @@
 </form>
 
 <!-- layout.Server.js loads mongodb query. Passed to page.js unpacked to "todos" in page.svelte then list each todo in an each loop -->
-{#each todos as todo}
-	<li>{todo.name}</li>
+{#each $savedTasks as todo, index}
+	<div class="tasks">
+		<form class="task" method="POST" action="?/delete" use:enhance>
+			<p>{todo.name}</p>
+			<p>index: <b>{index}</b></p>
+			<input hidden name="id" type="text" value={todo.name} />
+			<inpit hidden name="index" type="text" value={index} />
+			<button>delete</button>
+		</form>
+	</div>
 {/each}
+
+<style>
+	.task {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		width: 500px;
+		height: 45px;
+		background-color: lightblue;
+		margin-bottom: 2px;
+	}
+</style>

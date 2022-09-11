@@ -1,7 +1,14 @@
 import db from '$lib/mongo';
-
+import { savedTasks } from '$lib/store';
 // const tasks = await db.collection('Tasks').find({}).toArray();
 // console.log(tasks);
+let tasks;
+
+savedTasks.subscribe((value) => {
+	tasks = value;
+});
+
+console.log(`the store has ${tasks}`);
 
 /** @type {import('./types').PageServerLoad;} */
 export function load({ props }) {
@@ -32,5 +39,15 @@ export const actions = {
 	},
 	done: () => {
 		db.collection('Tasks').updateOne({ name: 'dishes' }, { $set: { status: 'done' } });
+	},
+
+	//removes entry based on matching name. Does not refresh webpage
+	delete: async ({ request }) => {
+		const data = await request.formData();
+		const name = data.get('id');
+		const index = data.get('index');
+		tasks.splice(index, 1);
+		console.log(`Delete see ${name}`);
+		db.collection('Tasks').deleteOne({ name: name });
 	}
 };
