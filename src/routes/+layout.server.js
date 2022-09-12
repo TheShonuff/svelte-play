@@ -1,4 +1,5 @@
 import db from '$lib/mongo';
+import { RAPID_KEY } from '$env/static/private';
 
 //import mongoDB connection and set the query. Parse the query because ObjectID isn't a friend POJO.
 
@@ -16,7 +17,7 @@ const urlReport =
 const options = {
 	method: 'GET',
 	headers: {
-		'X-RapidAPI-Key': '5239e6de29msh954aed23562ce7ep1d5c15jsnf5ae6e107277',
+		'X-RapidAPI-Key': RAPID_KEY,
 		'X-RapidAPI-Host': 'covid-19-statistics.p.rapidapi.com'
 	}
 };

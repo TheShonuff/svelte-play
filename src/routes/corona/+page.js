@@ -32,7 +32,7 @@ export async function load({ parent }) {
 	const myNum = 24;
 	const user = false;
 
-	//Attempt to load data from +server.page.js
+	//load mongoDB result from layout.server.js
 	const { parsedTasks } = await parent();
 
 	return {
