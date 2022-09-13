@@ -1,20 +1,44 @@
 import db from '$lib/mongo';
 import { savedTasks } from '$lib/store';
-// const tasks = await db.collection('Tasks').find({}).toArray();
-// console.log(tasks);
-let tasks;
+import { RAPID_KEY, RAPID_KEY2 } from '$env/static/private';
 
-savedTasks.subscribe((value) => {
-	tasks = value;
-});
+const urlReport =
+	'https://covid-19-statistics.p.rapidapi.com/reports?region_province=Arizona&iso=USA&region_name=US&date=2022-09-03';
 
-console.log(`the store has ${tasks}`);
+const options = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': RAPID_KEY2,
+		'X-RapidAPI-Host': 'covid-19-statistics.p.rapidapi.com'
+	}
+};
 
-/** @type {import('./types').PageServerLoad;} */
-export function load({ props }) {
-	const props2 = { b: 2 };
+const urlVaccine =
+	'https://vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com/api/npm-covid-data/northamerica';
+
+const vaccineOptions = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': RAPID_KEY2,
+		'X-RapidAPI-Host': 'vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com'
+	}
+};
+
+// ****
+
+/** @type {import('./$types').PageServerLoad;} */
+export async function load({ props }) {
+	const response = await fetch(urlReport, options);
+
+	const vaccineResponse = await fetch(urlVaccine, vaccineOptions);
+	let newTasks = await db.collection('Tasks').find({}).toArray();
+	let parsedNewTasks = JSON.parse(JSON.stringify(newTasks));
+	const result = await response.json();
+	const vac = await vaccineResponse.json();
+	const myNum = 24;
+	const user = false;
 	console.log('load function in +page.server.js');
-	return { props2 };
+	return { result, myNum, vac, user, parsedNewTasks };
 }
 
 /** @type {import('./$types').Actions} */
@@ -46,8 +70,14 @@ export const actions = {
 		const data = await request.formData();
 		const name = data.get('id');
 		const index = data.get('index');
-		tasks.splice(index, 1);
 		console.log(`Delete see ${name}`);
 		db.collection('Tasks').deleteOne({ name: name });
+	},
+	add: async ({ request }) => {
+		const data = await request.formData();
+		const todo = data.get('todo');
+
+		console.log(`You need to do ${todo}`);
+		db.collection('Tasks').insertOne({ name: todo, status: 'not done' });
 	}
 };

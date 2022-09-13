@@ -2,16 +2,18 @@
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
 	import { savedTasks } from '$lib/store';
+	import { reload } from '$lib/store';
 
 	/** @type {import('./$types').PageData}*/
 	export let data;
 	/** @type {import('./$types').ActionData}*/
 	export let form;
-
-	// unpack parsedTasks from page.js
-	let todos = data.parsedTasks;
-	$savedTasks = todos;
+	console.log("What's currently in the store:");
+	console.log('-------------');
 	console.log($savedTasks);
+	console.log('-------------');
+
+	$: TODO = data.parsedNewTasks;
 </script>
 
 <p>Hello from layout.server.js my num is: {$page.data.a}</p>
@@ -57,17 +59,24 @@
 </form>
 
 <!-- layout.Server.js loads mongodb query. Passed to page.js unpacked to "todos" in page.svelte then list each todo in an each loop -->
-{#each $savedTasks as todo, index}
-	<div class="tasks">
-		<form class="task" method="POST" action="?/delete" use:enhance>
-			<p>{todo.name}</p>
-			<p>index: <b>{index}</b></p>
-			<input hidden name="id" type="text" value={todo.name} />
-			<inpit hidden name="index" type="text" value={index} />
-			<button>delete</button>
-		</form>
-	</div>
-{/each}
+<div>
+	<h3>Tasks</h3>
+	<form method="POST" action="?/add" use:enhance>
+		<input name="todo" type="text" />
+		<button>Add</button>
+	</form>
+	{#each TODO as todo, index}
+		<div class="tasks">
+			<form class="task" method="POST" action="?/delete" use:enhance>
+				<p>{todo.name}</p>
+				<p>index: <b>{index}</b></p>
+				<input hidden name="id" type="text" value={todo.name} />
+				<inpit hidden name="index" type="text" value={index} />
+				<button>delete</button>
+			</form>
+		</div>
+	{/each}
+</div>
 
 <style>
 	.task {
