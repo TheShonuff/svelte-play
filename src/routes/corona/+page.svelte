@@ -14,6 +14,8 @@
 	console.log('-------------');
 
 	$: TODO = data.parsedNewTasks;
+	// Prints all the data in fron the server load function into console.
+	console.log($page.data);
 </script>
 
 <p>Hello from layout.server.js my num is: {$page.data.a}</p>
@@ -76,6 +78,28 @@
 			</form>
 		</div>
 	{/each}
+</div>
+
+<hr />
+
+<!-- A Test with $Page.data-->
+<div>
+	<h3>$Tasks</h3>
+	<form method="POST" action="?/add" use:enhance>
+		<input name="todo" type="text" />
+		<button>Add</button>
+		{#each $page.data.parsedNewTasks as todo, index}
+			<div class="tasks">
+				<form class="task" method="POST" action="?/delete" use:enhance>
+					<p>{todo.name}</p>
+					<p>index: <b>{index}</b></p>
+					<input hidden name="id" type="text" value={todo.name} />
+					<inpit hidden name="index" type="text" value={index} />
+					<button>delete</button>
+				</form>
+			</div>
+		{/each}
+	</form>
 </div>
 
 <style>

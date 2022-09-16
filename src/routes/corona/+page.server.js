@@ -2,6 +2,8 @@ import db from '$lib/mongo';
 import { savedTasks } from '$lib/store';
 import { RAPID_KEY, RAPID_KEY2 } from '$env/static/private';
 
+export const csr = true;
+
 const urlReport =
 	'https://covid-19-statistics.p.rapidapi.com/reports?region_province=Arizona&iso=USA&region_name=US&date=2022-09-03';
 
