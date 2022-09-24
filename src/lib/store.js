@@ -4,3 +4,5 @@ import { writable } from 'svelte/store';
 export const savedTasks = writable();
 /**@param {string} reload*/
 export const reload = writable();
+
+export const loggedIN = writable();
