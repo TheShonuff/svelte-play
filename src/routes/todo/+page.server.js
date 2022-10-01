@@ -18,7 +18,7 @@ export const actions = {
 		const data = await request.formData();
 		const name = data.get('id');
 		const index = data.get('index');
-		console.log(`Delete see ${name}`);
+		console.log(`Deleted ${name}`);
 		db.collection('Tasks').deleteOne({ name: name });
 	},
 	add: async ({ request }) => {
