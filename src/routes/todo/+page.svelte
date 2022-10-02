@@ -11,12 +11,20 @@
 	let index = 0;
 	$: max = $page.data.parsedTasks.length;
 	console.log(`parsed tasks is ${max} long`);
-	function handleCount() {
+
+	function increaseCount() {
 		if (indexCount < max - 1) {
 			indexCount++;
 			console.log(indexCount);
 		} else {
 			alert('max limit');
+		}
+	}
+	function decreaseCount() {
+		if (indexCount > 0) {
+			indexCount--;
+		} else {
+			alert('zero reached');
 		}
 	}
 </script>
@@ -45,12 +53,22 @@
 		{/each}
 	</form>
 </div>
+<hr />
+<hr />
 
-<h1>Tasks Scroll</h1>
+<h3>Tasks Scroll</h3>
 <div>
-	<h1>{$page.data.parsedTasks[indexCount].name}</h1>
-	<h2>There are {max} tasks</h2>
-	<button on:click={handleCount}>Click</button>
+	<h1>There are {max} tasks</h1>
+	<h2>{$page.data.parsedTasks[indexCount].name}</h2>
+	<h4>{$page.data.parsedTasks[indexCount].status}</h4>
+
+	<form class="status" method="POST" action="?/update" use:enhance>
+		<input hidden name="id" type="text" value={$page.data.parsedTasks[indexCount].name} />
+		<input hidden name="status" type="text" value={$page.data.parsedTasks[indexCount].status} />
+		<button>Change Status</button>
+	</form>
+	<button on:click={decreaseCount}>Previous</button>
+	<button on:click={increaseCount}>Next</button>
 </div>
 
 <style>

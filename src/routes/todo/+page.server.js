@@ -27,5 +27,15 @@ export const actions = {
 
 		console.log(`You need to do ${todo}`);
 		db.collection('Tasks').insertOne({ name: todo, status: 'not done' });
+	},
+	update: async ({ request }) => {
+		const data = await request.formData();
+		const task = data.get('id');
+		const status = data.get('status');
+		if (status === 'not done') {
+			db.collection('Tasks').updateOne({ name: task }, { $set: { status: 'done' } });
+		} else {
+			db.collection('Tasks').updateOne({ name: task }, { $set: { status: 'not done' } });
+		}
 	}
 };
